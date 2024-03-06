@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BiodataController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\UserController;
 
 
 Route::get('/cekdpt/{nik}/detail', [BiodataController::class, 'show']);
@@ -15,3 +16,14 @@ Route::post('post-registration', [AuthController::class, 'postRegistration'])->n
 Route::get('dashboard', [AuthController::class, 'dashboard']); 
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::resource('users', UserController::class);
+/* 
+GET|HEAD        users ................................................... users.index › UserController@index  
+POST            users ................................................... users.store › UserController@store  
+GET|HEAD        users/create .......................................... users.create › UserController@create  
+GET|HEAD        users/{user} .............................................. users.show › UserController@show  
+PUT|PATCH       users/{user} .......................................... users.update › UserController@update  
+DELETE          users/{user} ........................................ users.destroy › UserController@destroy  
+GET|HEAD        users/{user}/edit ......................................... users.edit › UserController@edit 
+
+*/
