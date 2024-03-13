@@ -49,7 +49,7 @@ class UserController extends Controller
                 'role_id' =>$data['role']
             ]);
 
-            return redirect()->route('users.index')->with('Great! You have added user '.$check->name);
+            return redirect()->route('users.index')->withSuccess('Great! You have added user '.$check->name);
         } catch (\Throwable $th) {
             //throw $th;
             return redirect()->route('users.index')->withFailed('oops '.$th);
@@ -72,24 +72,43 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $roles = Role::All();
+        $user = User::find($id);
+        return view('users/edit', compact('roles', 'user'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'role' => 'required|in:admin,dev,owner,user',
+        ]);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role_id = $request->role;
+        if(!empty($request->password)) $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->route('users.index')->withSuccess('Great! You have updated user '.$user->name);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        // $user = User::where('email', $id);
+        if($user->delete()){
+            return redirect()->route('users.index')->withSuccess('Great! You have deleted user '.$user->name);
+        }else{
+            return redirect()->route('users.index')->withFailed('oops data user cannot be deleted');
+        }
     }
 }
